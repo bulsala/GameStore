@@ -17,11 +17,12 @@
             repository = repo;
         }
 
-        public ViewResult List(int page = 1)
+        public ViewResult List(string category, int page = 1)
         {
             GameListViewModel model = new GameListViewModel
             {
                 Games = repository.Games
+                    .Where(x => category == null || x.Category == category)
                     .OrderBy(x => x.GameId)
                     .Skip((page - 1)*pageSize)
                     .Take(pageSize),
@@ -31,7 +32,9 @@
                     CurrentPage = page,
                     ItemsPerPage = pageSize,
                     TotalItems = repository.Games.Count()
-                }
+                },
+
+                CurrentCategory = category
             };
 
             return View(model);
